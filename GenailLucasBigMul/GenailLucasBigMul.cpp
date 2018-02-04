@@ -1,8 +1,6 @@
-#include <iostream>
 #include <chrono>
 #include <thread>
 
-#include "BigNumber.h"
 #include "GenailLucas.h"
 
 int main()

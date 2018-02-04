@@ -1,7 +1,9 @@
 #pragma once
 #include <array>
+#include <vector>
 #include <numeric>
 #include <iostream>
+#include <string>
 #include <cassert>
 
 namespace GeLu {

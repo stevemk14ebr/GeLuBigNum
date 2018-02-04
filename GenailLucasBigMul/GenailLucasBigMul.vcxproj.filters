@@ -21,14 +21,8 @@
     <ClCompile Include="GenailLucasBigMul.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="BigNumber.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="BigNumber.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="GenailLucas.h">
       <Filter>Header Files</Filter>
     </ClInclude>

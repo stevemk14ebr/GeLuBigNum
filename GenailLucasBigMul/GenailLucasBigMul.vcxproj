@@ -142,11 +142,9 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="BigNumber.cpp" />
     <ClCompile Include="GenailLucasBigMul.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="BigNumber.h" />
     <ClInclude Include="GenailLucas.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
