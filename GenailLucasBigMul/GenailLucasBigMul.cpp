@@ -14,17 +14,17 @@ int main()
 	for (int i = 0; i < 10; i++)
 	{
 		auto start = std::chrono::high_resolution_clock::now();
-		std::string mul = GeLuMul::multiply(mulLhs, mulRhs);
+		std::string mul = GeLu::multiply(mulLhs, mulRhs);
 		auto elapsed = std::chrono::high_resolution_clock::now() - start;
 		totalTicks += std::chrono::duration_cast<std::chrono::microseconds>(elapsed).count();
 	}
 
-	std::cout << "Multiply: " << GeLuMul::multiply(mulLhs, mulRhs) << std::endl;;
+	std::cout << "Multiply: " << GeLu::multiply(mulLhs, mulRhs) << std::endl;;
 	std::cout << "Elapsed (ns): " << totalTicks / 10 <<  std::endl;
 	std::cout << std::endl;
 
 	auto start = std::chrono::high_resolution_clock::now();
-	std::cout << "Sum: " << GeLuMul::sum("9999", "1") << std::endl;
+	std::cout << "Sum: " << GeLu::sum("9999", "1") << std::endl;
 	auto elapsed = std::chrono::high_resolution_clock::now() - start;
 	std::cout << "Elapsed (ns): " << std::chrono::duration_cast<std::chrono::microseconds>(elapsed).count() << std::endl;
 

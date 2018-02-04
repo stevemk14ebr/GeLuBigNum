@@ -4,7 +4,7 @@
 #include <iostream>
 #include <cassert>
 
-namespace GeLuMul {
+namespace GeLu {
 	typedef std::array<int8_t, 45> GeLuLut;
 
 #if _DEBUG
@@ -66,6 +66,7 @@ namespace GeLuMul {
 			larger = &addend;
 		}
 
+		// loop both numbers in reverse, add digit-wise, carry through
 		uint8_t carry = 0;
 		for (int idx1 = larger->length() - 1, idx2 = smaller->length() - 1; idx1 >= 0; idx1--, idx2--)
 		{
