@@ -8,23 +8,34 @@ int main()
 	std::string mulLhs = "50";
 	std::string mulRhs = "5";
 
+	// multiply benchmark
 	uint64_t totalTicks = 0;
-	for (int i = 0; i < 10; i++)
+	std::string mul = "";
+	for (int i = 0; i < 1000; i++)
 	{
 		auto start = std::chrono::high_resolution_clock::now();
-		std::string mul = GeLu::multiply(mulLhs, mulRhs);
+		mul = GeLu::multiply(mulLhs, mulRhs);
 		auto elapsed = std::chrono::high_resolution_clock::now() - start;
-		totalTicks += std::chrono::duration_cast<std::chrono::microseconds>(elapsed).count();
+		totalTicks += std::chrono::duration_cast<std::chrono::nanoseconds>(elapsed).count();
 	}
 
-	std::cout << "Multiply: " << GeLu::multiply(mulLhs, mulRhs) << std::endl;;
-	std::cout << "Elapsed (ns): " << totalTicks / 10 <<  std::endl;
+	std::cout << "Multiply: " << mul << std::endl;
+	std::cout << "Elapsed (ns): " << totalTicks / 1000 <<  std::endl;
 	std::cout << std::endl;
 
-	auto start = std::chrono::high_resolution_clock::now();
-	std::cout << "Sum: " << GeLu::sum("9999", "1") << std::endl;
-	auto elapsed = std::chrono::high_resolution_clock::now() - start;
-	std::cout << "Elapsed (ns): " << std::chrono::duration_cast<std::chrono::microseconds>(elapsed).count() << std::endl;
+	// addition benchmark
+	totalTicks = 0;
+	std::string sum = ""; // must be outside to prevent optimizer removing call
+	for (int i = 0; i < 1000; i++)
+	{
+		auto start = std::chrono::high_resolution_clock::now();
+		sum = GeLu::sum("9999", "1");
+		auto elapsed = std::chrono::high_resolution_clock::now() - start;
+		totalTicks += std::chrono::duration_cast<std::chrono::nanoseconds>(elapsed).count();
+	}
+
+	std::cout << "Sum: " << sum << std::endl;
+	std::cout << "Elapsed (ns): " << totalTicks / 1000 << std::endl;
 
 	std::this_thread::sleep_for(std::chrono::seconds(500));
     return 0;

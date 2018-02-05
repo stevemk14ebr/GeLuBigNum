@@ -58,16 +58,9 @@ namespace GeLu {
 		std::string result;
 		result.reserve(addend.length() + 1);
 
-		const std::string const* smaller = nullptr;
-		const std::string const* larger = nullptr;
-		smaller = &addend;
-		larger = &addend2;
-		if (addend2.length() < addend.length())
-		{
-			smaller = &addend2;
-			larger = &addend;
-		}
-
+		const std::string* const smaller = addend2.length() < addend.length() ? &addend2 : &addend;
+		const std::string* const larger = addend2.length() < addend.length() ? &addend : &addend2;
+		
 		// loop both numbers in reverse, add digit-wise, carry through
 		uint8_t carry = 0;
 		for (int idx1 = larger->length() - 1, idx2 = smaller->length() - 1; idx1 >= 0; idx1--, idx2--)
