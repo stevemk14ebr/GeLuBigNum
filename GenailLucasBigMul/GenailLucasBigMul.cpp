@@ -26,9 +26,7 @@
 //	}
 
 TEST_CASE("Multiply two small numbers", "Small multiply") {
-	
-
-	for (int i = 1; i < 50; i++)
+	for (int i = 1; i < 100; i++)
 	{
 		for (int j = 1; j < 100; j++)
 		{
@@ -39,5 +37,34 @@ TEST_CASE("Multiply two small numbers", "Small multiply") {
 }
 
 TEST_CASE("Sum two small numbers", "Small addition") {
-	CHECK(GeLu::sum("1", "1") == "2");
+	for (int i = 1; i < 100; i++)
+	{
+		for (int j = 1; j < 100; j++)
+		{
+			INFO("i=" + std::to_string(i) + ", j=" + std::to_string(j));
+			CHECK(GeLu::sum(std::to_string(i), std::to_string(j)) == std::to_string(i + j));
+		}
+	}
+}
+
+TEST_CASE("Multiply two large numbers", "Large multiply") {
+	for (uint64_t i = 100'000'000ULL; i < 100'000'100ULL; i++)
+	{
+		for (uint64_t j = 100'000'000ULL; j < 100'000'100ULL; j++)
+		{
+			INFO("i=" + std::to_string(i) + ", j=" + std::to_string(j));
+			CHECK(GeLu::multiply(std::to_string(i), std::to_string(j)) == std::to_string(i * j));
+		}
+	}
+}
+
+TEST_CASE("Sum two large numbers", "Large addition") {
+	for (uint64_t i = 100'000'000ULL; i < 100'000'100ULL; i++)
+	{
+		for (uint64_t j = 100'000'000ULL; j < 100'000'100ULL; j++)
+		{
+			INFO("i=" + std::to_string(i) + ", j=" + std::to_string(j));
+			CHECK(GeLu::sum(std::to_string(i), std::to_string(j)) == std::to_string(i + j));
+		}
+	}
 }
