@@ -145,6 +145,7 @@
     <ClCompile Include="GenailLucasBigMul.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Catch.hpp" />
     <ClInclude Include="GenailLucas.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

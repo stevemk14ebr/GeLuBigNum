@@ -1,43 +1,43 @@
 #include <chrono>
 #include <thread>
 
+//#define SHOW_DBG
 #include "GenailLucas.h"
 
-int main()
-{	
-	std::string mulLhs = "50";
-	std::string mulRhs = "5";
+#define CATCH_CONFIG_MAIN
+#include "Catch.hpp"
 
-	// multiply benchmark
-	uint64_t totalTicks = 0;
-	std::string mul = "";
-	for (int i = 0; i < 1000; i++)
+// Use this to print the indexes of the rulers in the tables
+//
+//	GeLu::Ruler ruler = GeLu::Lut::rulers.at(1); <- ruler '0'
+//	GeLu::Ruler idx = GeLu::Lut::rulers.at(0); <- index ruler
+//
+//	// 9 regions
+//	for (uint8_t region = 1; region <= 9; region++)
+//	{
+//		// each region's size is = to its region number
+//		for (int regionCount = 0; regionCount < region; regionCount++) {
+//
+//			uint8_t rulerIdx = (int)ruler.getRegionStart(region) + regionCount;
+//			uint8_t tipIdx = ruler.getCarry(rulerIdx);
+//			std::cout << "Ruler Idx:" << (int)rulerIdx << " Tip Idx: " << (int)tipIdx << std::endl;
+//		}	
+//		std::cout << std::endl;
+//	}
+
+TEST_CASE("Multiply two small numbers", "Small multiply") {
+	
+
+	for (int i = 1; i < 50; i++)
 	{
-		auto start = std::chrono::high_resolution_clock::now();
-		mul = GeLu::multiply(mulLhs, mulRhs);
-		auto elapsed = std::chrono::high_resolution_clock::now() - start;
-		totalTicks += std::chrono::duration_cast<std::chrono::nanoseconds>(elapsed).count();
+		for (int j = 1; j < 100; j++)
+		{
+			INFO("i=" + std::to_string(i) + ", j=" + std::to_string(j));
+			CHECK(GeLu::multiply(std::to_string(i), std::to_string(j)) == std::to_string(i * j));
+		}
 	}
-
-	std::cout << "Multiply: " << mul << std::endl;
-	std::cout << "Elapsed (ns): " << totalTicks / 1000 <<  std::endl;
-	std::cout << std::endl;
-
-	// addition benchmark
-	totalTicks = 0;
-	std::string sum = ""; // must be outside to prevent optimizer removing call
-	for (int i = 0; i < 1000; i++)
-	{
-		auto start = std::chrono::high_resolution_clock::now();
-		sum = GeLu::sum("9999", "1");
-		auto elapsed = std::chrono::high_resolution_clock::now() - start;
-		totalTicks += std::chrono::duration_cast<std::chrono::nanoseconds>(elapsed).count();
-	}
-
-	std::cout << "Sum: " << sum << std::endl;
-	std::cout << "Elapsed (ns): " << totalTicks / 1000 << std::endl;
-
-	std::this_thread::sleep_for(std::chrono::seconds(500));
-    return 0;
 }
 
+TEST_CASE("Sum two small numbers", "Small addition") {
+	CHECK(GeLu::sum("1", "1") == "2");
+}
