@@ -1,7 +1,7 @@
 
 # Genaille Lucas Rulers
 These rulers are a pre-computed lookup table for 1 digit multiplies by an N digit multiplicand. This 1 by N attribute can be used
-to scale to N by N multiplies by breaking the multiplier into it's place-components, apply the lut, then adding all the split chunks 
+to scale to N by M multiplies by breaking the multiplier into it's place-components, apply the lut, then adding all the split chunks 
 back together. 
 
 Here's a great VSauce video about them: https://www.youtube.com/watch?v=OxRMyPsLtTk
