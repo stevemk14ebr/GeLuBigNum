@@ -8,7 +8,7 @@ Here's a great VSauce video about them: https://www.youtube.com/watch?v=OxRMyPsL
 
 # The library
 This library is naive in everyway and unoptimized. Big digits are stored directly as their character representation instead of a more 
-efficient packed encoding. Also only two operators are implemented (add and multiply).
+efficient packed encoding. Also only two operators are implemented (add and multiply). This library exposes a multiply() and sum() function that takes an arbitrary length string and does the operation. This could be extended to division with another lut and subtraction im sure too if there is any real interest.
 
 # Why
 The rulers are interesting, and if you don't care about speed the code size is quite good. That said this isn't THAT slow, it
