@@ -142,9 +142,11 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="BigDigit.cpp" />
     <ClCompile Include="GenailLucasBigMul.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BigNum.h" />
     <ClInclude Include="Catch.hpp" />
     <ClInclude Include="GenailLucas.h" />
   </ItemGroup>

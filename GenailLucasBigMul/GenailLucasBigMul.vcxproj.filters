@@ -21,12 +21,18 @@
     <ClCompile Include="GenailLucasBigMul.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="BigDigit.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GenailLucas.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Catch.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BigNum.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

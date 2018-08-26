@@ -9,7 +9,6 @@
 namespace GeLu {
 	typedef std::array<int8_t, 45> GeLuLut;
 
-
 #if defined(_DEBUG) && defined(SHOW_DBG)
 #define Dbg(x) x
 #else
