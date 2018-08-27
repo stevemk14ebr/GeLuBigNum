@@ -21,7 +21,7 @@
     <ClCompile Include="GenailLucasBigMul.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="BigDigit.cpp">
+    <ClCompile Include="BigNum.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
