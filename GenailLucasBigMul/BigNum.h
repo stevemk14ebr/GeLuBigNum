@@ -4,6 +4,9 @@
 #include <vector>
 #include <bitset>
 #include <stdint.h>
+#include <iostream>
+#include <algorithm>
+#include <cassert>
 
 /**Represents a variable length integer as a continguous array of 4 bit binary integers per each digit. 
 
@@ -27,17 +30,36 @@ form efficiently by walking every 4 bits: bit_idx = string_idx*4. Get number of 
 **/
 class BigNum {
 public:
+	BigNum() = default;
 	BigNum(std::string str, bool isNeg = false);
+	
+	// zero indexed get char at idx. DOESN'T bounds check
 	uint8_t at(const uint32_t idx) const;
+
+	// get stringized number
 	std::string str() const;
+
+	// get bit string including control nibble
 	std::string bitStr() const;
 
 	bool isNegative() const;
+
+	// how many chars are held (ignores control nibble)
 	uint16_t length() const;
+	
+	// operations
+	static BigNum sum(const BigNum& addend, const BigNum& addend2);
+
+	// manual insertion
+	void set(const uint32_t idx, const uint8_t val);
+	void insertCtrlNibble(bool isOdd, bool isNeg);
+
+	// alloc 'charCount' number of chars and fill with '0' 
+	void resize(const uint32_t charCount);
 private:
 	enum flags : uint8_t {
 		IS_ODD = 1 << 0,
-		IS_NEG = 1 << 1
+		IS_NEG = 1 << 1,
 	};
 
 	enum flagsIdx : uint8_t {
@@ -47,3 +69,10 @@ private:
 
 	std::vector<uint8_t> m_bits;
 };
+
+#define CEIL_DIV(dividend,  divisor) (dividend / divisor + (dividend % divisor != 0))
+#define SET_BIT_TO(num, x, idx) (num ^= (-(!!((unsigned long)x)) ^ num) & (1UL << idx))
+#define IS_BIT_SET(num, idx) ((bool)((num >> idx) & 1ULL))
+#define IS_ODD(num) ((bool)(num % 2))
+#define IS_EVEN(num) ((bool)(!IS_ODD(num)))
+
