@@ -181,6 +181,23 @@ TEST_CASE("Bignum Addition", "BigNum operation") {
 			}
 		}
 	}
+
+	SECTION("Sum negatives") {
+		for (int i = 1; i < 100; i++)
+		{
+			for (int j = 1; j < i; j++)
+			{
+				BigNum num1(std::to_string(i));
+				BigNum num2(std::to_string(-1*j));
+
+				INFO("i=" + num1.str() + ", j=" + num2.str());
+				BigNum result = BigNum::sum(num1, num2);
+				std::string str = result.str();
+				str.erase(0, std::min(str.find_first_not_of('0'), str.size() - 1));
+				CHECK(str == std::to_string(i - j));
+			}
+		}
+	}
 }
 
 TEST_CASE("Multiply two small numbers", "Small multiply") {

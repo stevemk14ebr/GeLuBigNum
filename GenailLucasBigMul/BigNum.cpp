@@ -86,8 +86,10 @@ void BigNum::insertCtrlNibble(bool isOdd, bool isNeg) {
 
 BigNum BigNum::sum(const BigNum& addend, const BigNum& addend2)
 {
+	bool dontComplement = !addend.isNegative() && !addend2.isNegative();
+
 	// plus one for the carry
-	int maxLen = std::max<uint32_t>(addend.length(), addend2.length()) + 1;
+	int maxLen = std::max<uint32_t>(addend.length(), addend2.length()) + (1*dontComplement);
 	int addendLen = addend.length();
 	int addend2Len = addend2.length();
 
@@ -101,15 +103,28 @@ BigNum BigNum::sum(const BigNum& addend, const BigNum& addend2)
 		uint8_t tmpAddend2 = offset >= addend2Len ? 0 : addend2.at(addend2Len - offset - 1);
 		uint8_t tmpAddend = offset >= addendLen ? 0 : addend.at(addendLen - offset - 1);
 		
-		uint16_t tmpResult = tmpAddend + tmpAddend2 + carry;
+		if (addend.isNegative())
+			tmpAddend = 9 - tmpAddend;
+
+		if (addend2.isNegative())
+			tmpAddend2 = 9 - tmpAddend2;
+
+		// if positive do the operation x+y=result, otherwise do 10's complement subtraction on whichever is negative
+		uint16_t tmpResult = carry + tmpAddend + tmpAddend2;
 		carry = tmpResult / 10;
 	    uint8_t val = tmpResult % 10;
 
 		result.set(maxLen - offset - 1, val);
 	}
-	result.set(0, carry);
 
 	// our encoding requires this, we just inserted manually so now we must insert this
-	result.insertCtrlNibble(maxLen % 2, addend.isNegative() ^ addend2.isNegative());
+	result.insertCtrlNibble(maxLen % 2, !dontComplement && carry == 0);
+
+	// add carry digit for summing positives. Otherwise add 1 for 9's complement
+	if (dontComplement)
+		result.set(0, carry);
+	else if(carry != 0)
+		result = sum(result, BigNum("1"));
+
 	return result;
 }
