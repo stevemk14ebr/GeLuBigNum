@@ -101,7 +101,7 @@ TEST_CASE("BigNum encoding", "BigNum Encode") {
 				str += std::to_string(i + 1);
 				CHECK(num->at(i) == i + 1);
 			}
-			CHECK(num->str() == str);
+			CHECK(num->str(false) == str);
 		}
 	}
 
@@ -109,40 +109,40 @@ TEST_CASE("BigNum encoding", "BigNum Encode") {
 		BigNum negNum(std::to_string(-100));
 		REQUIRE(negNum.isNegative());
 		REQUIRE(negNum.bitStr() == "00010000 00000011");
-		REQUIRE(negNum.str() == "100");
+		REQUIRE(negNum.str() == "-100");
 
 		BigNum negNum2(std::to_string(100), true);
 		REQUIRE(negNum2.isNegative());
 		REQUIRE(negNum2.bitStr() == "00010000 00000011");
-		REQUIRE(negNum2.str() == "100");
+		REQUIRE(negNum2.str() == "-100");
 
 		BigNum negNum3(std::to_string(-10));
 		REQUIRE(negNum3.isNegative());
 		REQUIRE(negNum3.bitStr() == "00010000 00000010");
-		REQUIRE(negNum3.str() == "10");
+		REQUIRE(negNum3.str() == "-10");
 
 		BigNum negNum4(std::to_string(-1));
 		REQUIRE(negNum4.isNegative());
 		REQUIRE(negNum4.bitStr() == "00010011");
-		REQUIRE(negNum4.str() == "1");
+		REQUIRE(negNum4.str() == "-1");
 
 		for (int i = -9; i < 0; i++) {
 			BigNum negLoop(std::to_string(i));
 			CHECK(negLoop.isNegative());
 			CHECK(negLoop.length() == 1);
-			CHECK(negLoop.str() == std::to_string(i * -1));
+			CHECK(negLoop.str() == std::to_string(i));
 		}	
 
 		for (int i = -100; i < 0; i++) {
 			BigNum negLoop(std::to_string(i));
 			CHECK(negLoop.isNegative());
-			CHECK(negLoop.str() == std::to_string(i * -1));
+			CHECK(negLoop.str() == std::to_string(i));
 		}
 
 		for (long i = -100'000'000'000; i < -98'000'000'000; i++) {
 			BigNum negLoop(std::to_string(i));
 			CHECK(negLoop.isNegative());
-			CHECK(negLoop.str() == std::to_string(i * -1L));
+			CHECK(negLoop.str() == std::to_string(i));
 		}
 	}
 }
@@ -159,7 +159,6 @@ TEST_CASE("Bignum Addition", "BigNum operation") {
 				INFO("i=" + num1.str() + ", j=" + num2.str());
 				BigNum result = BigNum::sum(num1, num2);
 				std::string str = result.str();
-				str.erase(0, std::min(str.find_first_not_of('0'), str.size() - 1));
 				CHECK(str == std::to_string(i + j));
 			}
 		}
@@ -176,16 +175,15 @@ TEST_CASE("Bignum Addition", "BigNum operation") {
 				INFO("i=" + num1.str() + ", j=" + num2.str());
 				BigNum result = BigNum::sum(num1, num2);
 				std::string str = result.str();
-				str.erase(0, std::min(str.find_first_not_of('0'), str.size() - 1));
 				CHECK(str == std::to_string(i + j));
 			}
 		}
 	}
 
-	SECTION("Sum negatives") {
-		for (int i = 1; i < 100; i++)
+	SECTION("Sum negative with positive") {
+		for (int i = 0; i < 100; i++)
 		{
-			for (int j = 1; j < i; j++)
+			for (int j = 0; j < i; j++)
 			{
 				BigNum num1(std::to_string(i));
 				BigNum num2(std::to_string(-1*j));
@@ -193,8 +191,26 @@ TEST_CASE("Bignum Addition", "BigNum operation") {
 				INFO("i=" + num1.str() + ", j=" + num2.str());
 				BigNum result = BigNum::sum(num1, num2);
 				std::string str = result.str();
-				str.erase(0, std::min(str.find_first_not_of('0'), str.size() - 1));
 				CHECK(str == std::to_string(i - j));
+			}
+		}
+	}
+
+	SECTION("Sum negative with negative") {
+		for (int i = 1; i < 100; i++)
+		{
+			for (int j = 1; j < i; j++)
+			{
+				BigNum num1(std::to_string(-1 * i));
+				BigNum num2(std::to_string(-1 * j));
+				REQUIRE(num1.isNegative());
+				REQUIRE(num2.isNegative());
+
+				INFO("i=" + num1.str() + ", j=" + num2.str());
+				std::cout << "i=" + num1.str() + ", j=" + num2.str() << std::endl;
+				BigNum result = BigNum::sum(num1, num2);
+				std::string str = result.str();
+				CHECK(str == std::to_string((-1*i) + (-1*j)));
 			}
 		}
 	}

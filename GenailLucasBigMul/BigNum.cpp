@@ -52,7 +52,7 @@ bool BigNum::isNegative() const {
 	return m_bits.back() & flags::IS_NEG;
 }
 
-std::string BigNum::str() const {
+std::string BigNum::str(bool prependSign /*= true*/) const {
 	std::string str;
 	str.resize(this->length());
 
@@ -63,6 +63,10 @@ std::string BigNum::str() const {
 	}
 
 	str.back() |= (((m_bits.back() >> 4) & 0xF) + '0') * IS_ODD(str.length());
+	str.erase(0, std::min(str.find_first_not_of('0'), str.size() - 1));
+
+	if (prependSign && isNegative())
+		return "-" + str;
 	return str;
 }
 
@@ -86,7 +90,9 @@ void BigNum::insertCtrlNibble(bool isOdd, bool isNeg) {
 
 BigNum BigNum::sum(const BigNum& addend, const BigNum& addend2)
 {
-	bool dontComplement = !addend.isNegative() && !addend2.isNegative();
+	bool bothNegative = addend.isNegative() && addend2.isNegative();
+	bool bothPositive = !addend.isNegative() && !addend2.isNegative();
+	bool dontComplement = bothPositive || bothNegative;
 
 	// plus one for the carry
 	int maxLen = std::max<uint32_t>(addend.length(), addend2.length()) + (1*dontComplement);
@@ -103,13 +109,15 @@ BigNum BigNum::sum(const BigNum& addend, const BigNum& addend2)
 		uint8_t tmpAddend2 = offset >= addend2Len ? 0 : addend2.at(addend2Len - offset - 1);
 		uint8_t tmpAddend = offset >= addendLen ? 0 : addend.at(addendLen - offset - 1);
 		
-		if (addend.isNegative())
+		// 9's complement if negative
+		if (addend.isNegative() && !dontComplement)
 			tmpAddend = 9 - tmpAddend;
 
-		if (addend2.isNegative())
+		// 9's complement if negative
+		if (addend2.isNegative() && !dontComplement)
 			tmpAddend2 = 9 - tmpAddend2;
 
-		// if positive do the operation x+y=result, otherwise do 10's complement subtraction on whichever is negative
+		// if positive do the operation x+y+c=result
 		uint16_t tmpResult = carry + tmpAddend + tmpAddend2;
 		carry = tmpResult / 10;
 	    uint8_t val = tmpResult % 10;
@@ -118,13 +126,17 @@ BigNum BigNum::sum(const BigNum& addend, const BigNum& addend2)
 	}
 
 	// our encoding requires this, we just inserted manually so now we must insert this
-	result.insertCtrlNibble(maxLen % 2, !dontComplement && carry == 0);
+	result.insertCtrlNibble(maxLen % 2, (!bothPositive && carry == 0) || bothNegative);
 
-	// add carry digit for summing positives. Otherwise add 1 for 9's complement
-	if (dontComplement)
+	// add carry digit when summing positives.
+	if (dontComplement) {
 		result.set(0, carry);
-	else if(carry != 0)
+	} else if (carry != 0) {
+		// Otherwise add carry if exists for 9's complement
 		result = sum(result, BigNum("1"));
+	} else {
+		// Otherwise if no carry then take complement and make negative
 
+	}
 	return result;
 }

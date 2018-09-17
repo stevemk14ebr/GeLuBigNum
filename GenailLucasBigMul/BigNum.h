@@ -37,7 +37,7 @@ public:
 	uint8_t at(const uint32_t idx) const;
 
 	// get stringized number
-	std::string str() const;
+	std::string str(bool prependSign = true) const;
 
 	// get bit string including control nibble
 	std::string bitStr() const;
