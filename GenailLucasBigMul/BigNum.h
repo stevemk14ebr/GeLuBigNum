@@ -49,6 +49,7 @@ public:
 	
 	// operations
 	static BigNum sum(const BigNum& addend, const BigNum& addend2);
+	static BigNum sub(const BigNum& minuend, const BigNum& subtrahend);
 
 	// manual insertion
 	void set(const uint32_t idx, const uint8_t val);

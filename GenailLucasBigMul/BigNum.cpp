@@ -7,6 +7,9 @@ false the or turned into a no-op since 'byte | 0 = byte';
 
 if(cond) 
    byte |= x		====>    byte |= cond*x  
+
+Subtraction is a special case of addition. This is implemented via
+the 9's complement technique.
 **/
 BigNum::BigNum(const std::string str, bool isNeg) {
 	assert(str.length() > 0);
@@ -136,7 +139,21 @@ BigNum BigNum::sum(const BigNum& addend, const BigNum& addend2)
 		result = sum(result, BigNum("1"));
 	} else {
 		// Otherwise if no carry then take complement and make negative
+		BigNum complementedResult;
+		complementedResult.resize(result.length());
 
+		for (int i = 0; i < result.length(); i++) {
+			complementedResult.set(i, 9 - result.at(i));
+		}
+		complementedResult.insertCtrlNibble(result.m_bits.back() & IS_ODD, true);
+		result = complementedResult;
 	}
 	return result;
+}
+
+// TODO: add an add overload to ignore sign so we don't need to copy.
+BigNum BigNum::sub(const BigNum& minuend, const BigNum& subtrahend) {
+	BigNum copy = subtrahend;
+	copy.insertCtrlNibble(subtrahend.m_bits.back() & flags::IS_ODD, !subtrahend.isNegative());
+	return sum(minuend, copy);
 }

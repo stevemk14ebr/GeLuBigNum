@@ -187,7 +187,7 @@ TEST_CASE("Bignum Addition", "BigNum operation") {
 			{
 				BigNum num1(std::to_string(i));
 				BigNum num2(std::to_string(-1*j));
-
+			
 				INFO("i=" + num1.str() + ", j=" + num2.str());
 				BigNum result = BigNum::sum(num1, num2);
 				std::string str = result.str();
@@ -207,10 +207,43 @@ TEST_CASE("Bignum Addition", "BigNum operation") {
 				REQUIRE(num2.isNegative());
 
 				INFO("i=" + num1.str() + ", j=" + num2.str());
-				std::cout << "i=" + num1.str() + ", j=" + num2.str() << std::endl;
 				BigNum result = BigNum::sum(num1, num2);
 				std::string str = result.str();
 				CHECK(str == std::to_string((-1*i) + (-1*j)));
+			}
+		}
+	}
+}
+
+TEST_CASE("Bignum Subtraction", "BigNum operation") {
+	SECTION("Small numbers, positive result") {
+		for (int i = 1; i < 100; i++)
+		{
+			for (int j = 1; j < i; j++)
+			{
+				BigNum num1(std::to_string(i));
+				BigNum num2(std::to_string(j));
+
+				INFO("i=" + num1.str() + ", j=" + num2.str());
+				BigNum result = BigNum::sub(num1, num2);
+				std::string str = result.str();
+				CHECK(str == std::to_string(i - j));
+			}
+		}
+	}
+
+	SECTION("Small numbers, negative results") {
+		for (int i = 1; i < 100; i++)
+		{
+			for (int j = i + 1; j < 100; j++)
+			{
+				BigNum num1(std::to_string(i));
+				BigNum num2(std::to_string(j));
+
+				INFO("i=" + num1.str() + ", j=" + num2.str());
+				BigNum result = BigNum::sub(num1, num2);
+				std::string str = result.str();
+				CHECK(str == std::to_string(i - j));
 			}
 		}
 	}
