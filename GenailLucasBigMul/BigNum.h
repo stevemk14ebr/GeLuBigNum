@@ -57,7 +57,9 @@ public:
 
 	// alloc 'charCount' number of chars and fill with '0' 
 	void resize(const uint32_t charCount);
-private:
+
+	uint8_t controlByte() const;
+
 	enum flags : uint8_t {
 		IS_ODD = 1 << 0,
 		IS_NEG = 1 << 1,
@@ -67,7 +69,7 @@ private:
 		IS_ODD_IDX = 0,
 		IS_NEG_IDX = 1
 	};
-
+private:
 	std::vector<uint8_t> m_bits;
 };
 

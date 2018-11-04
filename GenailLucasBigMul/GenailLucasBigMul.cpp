@@ -29,16 +29,22 @@
 //
 //
 //
-//TEST_CASE("Multiply two large numbers", "Large multiply") {
-//	for (uint64_t i = 100'000'000ULL; i < 100'000'100ULL; i++)
-//	{
-//		for (uint64_t j = 100'000'000ULL; j < 100'000'100ULL; j++)
-//		{
-//			INFO("i=" + std::to_string(i) + ", j=" + std::to_string(j));
-//			CHECK(GeLu::multiply(std::to_string(i), std::to_string(j)) == std::to_string(i * j));
-//		}
-//	}
-//}
+
+TEST_CASE("Multiply two digit small numbers", "MultiDigit multiply") {
+	for (uint64_t i = 10; i < 100; i++)
+	{
+		BigNum first(std::to_string(i));
+		for (uint64_t j = 10; j < 1000LL; j++)
+		{
+			BigNum second(std::to_string(j));
+			INFO("i=" + std::to_string(i) + ", j=" + std::to_string(j));
+
+			BigNum result = GeLu::multiply(first, second);
+
+			CHECK(result.str() == std::to_string(i * j));
+		}
+	}
+}
 //
 //
 //TEST_CASE("Factorial small", "Small factorial") {

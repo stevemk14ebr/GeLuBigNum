@@ -41,6 +41,10 @@ uint8_t BigNum::at(const uint32_t idx) const {
 	return m_bits[idx / 2] >> (4 * ((uint8_t)IS_EVEN(idx))) & 0xF;
 }
 
+uint8_t BigNum::controlByte() const {
+	return m_bits.back();
+}
+
 void BigNum::set(const uint32_t idx, const uint8_t val) {
 	m_bits[idx / 2] |= ((val & 0xF) * IS_EVEN(idx)) << 4;
 	m_bits[idx / 2] |= (val & 0xF) * IS_ODD(idx);

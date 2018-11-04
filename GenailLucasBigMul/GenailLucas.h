@@ -11,6 +11,8 @@
 namespace GeLu {
 	typedef std::array<int8_t, 45> GeLuLut;
 
+
+
 #if defined(_DEBUG) && defined(SHOW_DBG)
 #define Dbg(x) x
 #else
@@ -61,7 +63,7 @@ namespace GeLu {
 		return std::accumulate(std::next(terms.begin()), terms.end(),
 			terms[0], // start with first element
 			[](const BigNum& lhs, const BigNum& rhs) {
-			return BigNum::sum(lhs, rhs);
+				return BigNum::sum(lhs, rhs);
 		});
 	}
 
@@ -85,7 +87,7 @@ namespace GeLu {
 		
 		// special case, not in lut
 		if (multiplier == 0) {
-			Dbg(std::cout << (int)multiplier << " * " << multiplicand << " = 0" << std::endl);
+			Dbg(std::cout << (int)multiplier << " * " << multiplicand.str() << " = 0" << std::endl);
 			return BigNum("0");
 		}
 
@@ -98,7 +100,7 @@ namespace GeLu {
 			// insert digits right to left
 			result.set(result.length() - offset - 1, ruler.rhs.at(regionIdx));
 
-			Dbg(std::cout << multiplier << " push " << (int)ruler.rhs.at(regionIdx) << " = " << result << std::endl);
+			Dbg(std::cout << (int)multiplier << " push " << (int)ruler.rhs.at(regionIdx) << " = " << result.str() << std::endl);
 
 			// follow the triangle to the next region on sibling ruler
 			regionIdx = ruler.getCarry(regionIdx);
@@ -107,35 +109,34 @@ namespace GeLu {
 		uint8_t carry = Lut::rulers.at(0).rhs.at(regionIdx);
 		result.set(result.length() - offset - 1, carry);
 
-		Dbg(std::cout << "push carry" << (int)carry << std::endl);
+		Dbg(std::cout << "push carry " << (int)carry << std::endl);
 		return result;
 	}
 
 	// N digit by N digit
-	//std::string multiply(const std::string& multiplier, const std::string& multiplicand)
-	//{
-	//	/*Terms:						    				 [addend] [addend]
-	//															||		||
-	//	Ex: 45 * 23 = (4*23)*10^1 + (5*23)*10^0 = 92'0' + 115 = 920 + 115 = 1035
-	//	*/
-	//	std::vector<std::string> addends;		
-	//	addends.reserve(multiplier.length());
+	BigNum multiply(const BigNum& multiplier, const BigNum& multiplicand)
+	{
+		/*Terms:						    				 [addend] [addend]
+																||		||
+		Ex: 45 * 23 = (4*23)*10^1 + (5*23)*10^0 = 92'0' + 115 = 920 + 115 = 1035
+		*/
+		std::vector<BigNum> addends;		
+		addends.reserve(multiplier.length());
 
-	//	 each digit of multiplier times entire multicand (1 by N), then sum those results
-	//	const uint32_t multiplierLength = multiplier.length();
-	//	for (uint32_t place = 0 ; place < multiplierLength; place++)
-	//	{
-	//		std::string gelu = multiply_impl(multiplier.at(place), multiplicand);
-	//		
-	//		gelu.append(multiplierLength - (place + 1), '0'); // * std::pow(10, place_weight)
+		// each digit of multiplier times entire multicand (1 by N), then sum those results
+		const uint32_t multiplierLength = multiplier.length();
+		for (uint32_t place = 0 ; place < multiplierLength; place++)
+		{
+			BigNum gelu = multiply_impl(multiplier.at(place), multiplicand);
+			Dbg(std::cout << gelu.str() << std::endl);
+				
+			// TODO: do this in-place instead of indirection through strings
+			gelu = BigNum(gelu.str().append(multiplierLength - (place + 1), '0'));
 
-	//		Dbg(std::cout << gelu << std::endl);
-
-	//		addends.push_back(gelu);
-	//	}
-	//	Dbg(std::cout << std::endl);
-	//	return summation(addends);
-	//}
+			addends.push_back(gelu);
+		}
+		return summation(addends);
+	}
 	 
 	Ruler::Ruler(const GeLuLut& rhs, const GeLuLut& triangles)
 	{
