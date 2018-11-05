@@ -132,11 +132,9 @@ namespace GeLu {
 		{
 			BigNum gelu = multiply_impl(multiplier.at(place), multiplicand);
 			Dbg(std::cout << gelu.str() << std::endl);
-				
-			// TODO: do this in-place instead of indirection through strings
-			gelu = BigNum(gelu.str().append(multiplierLength - (place + 1), '0'));
-
-			addends.push_back(gelu);
+	
+			gelu.append(multiplierLength - (place + 1), 0);
+			addends.push_back(std::move(gelu));
 		}
 		return summation(addends);
 	}

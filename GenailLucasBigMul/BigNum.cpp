@@ -19,7 +19,7 @@ BigNum::BigNum(const std::string str, bool isNeg) {
 	bool hasNegSign = str[0] == '-';
 
 	// N/2 chars per byte
-	m_bits.resize(std::ceil((str.length() - hasNegSign) / 2.0));
+	m_bits.resize(FAST_CEIL_DIV(str.length() - hasNegSign, 2));
 	
 	// walk 1 byte per 2 chars, skip neg if exists
 	for (int i = hasNegSign; i < (str.length() - 1); i+=2) {
@@ -35,7 +35,7 @@ BigNum::BigNum(const std::string str, bool isNeg) {
 }
 
 void BigNum::resize(const uint32_t charCount) {
-	m_bits.resize(std::ceil(charCount / 2.0));
+	m_bits.resize(FAST_CEIL_DIV(charCount, 2));
 }
 
 uint8_t BigNum::at(const uint32_t idx) const {
@@ -66,6 +66,9 @@ void BigNum::set(const uint32_t idx, const uint8_t val) {
 
 uint16_t BigNum::length() const {
 	// 1 byte is 2 chars
+	/*Odd: [ value '1' | empty ] len = 2 - 1 = 1
+	  Even: [ value '1' | value '0' ] len = 2 - 0 = 2
+	*/
 	return m_bits.size() * 2 - m_control.isOdd;
 }
 
@@ -165,7 +168,23 @@ BigNum BigNum::sum(const BigNum& addend, const ControlFields& cf1, const BigNum&
 		result.m_control.isOdd = result.m_control.isOdd;
 		result.m_control.isNegative = true;
 	}
-	return result;
+	return std::move(result);
+}
+
+void BigNum::append(const uint32_t count, const uint8_t val) {
+	uint32_t oldLen = length();
+	uint32_t newLen = oldLen + count;
+
+	/* 4 bit nibbles of bytes get changes in xor pattern.
+	Think of the last cell [ value '3' | empty] where that is an 'odd' cell.
+	If you add another 'odd' cell [ value '1' | empty] the final cell is
+	[ '3' | '1' ] making an 'even' cell*/
+	bool isOdd = m_control.isOdd ^ (count % 2);
+	resize(newLen);
+	m_control.isOdd = isOdd;
+	for (int i = oldLen; i < newLen; i++) {
+		set(i, val);
+	}
 }
 
 bool BigNum::isNegative() const {

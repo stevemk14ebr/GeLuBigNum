@@ -28,6 +28,11 @@ form efficiently by walking every 4 bits: bit_idx = string_idx*4. Get number of 
 |		|		|		|		|		|			|			|
 -----------------------------------------------------------------
 
+Addendum:
+
+So apparently this is basically BCD with some control fields. I've updated the encoding to do the control bits out-of-band in a second structure. 
+This makes the logic a bit easier to follow with less shifts. It also removes some of the tricky +/- 1 issues that come up, and spoofing the 
+sign for subtraction becomes possible as well as efficient append with only a vector resize (usually move?).
 **/
 class BigNum {
 public:
@@ -63,6 +68,9 @@ public:
 	// alloc 'charCount' number of chars and fill with '0' 
 	void resize(const uint32_t charCount);
 
+	// append val, count # of times, NOTE: 'oddness' control field may change
+	void append(const uint32_t count, const uint8_t val);
+
 	// get/set control
 	ControlFields& getControl();
 
@@ -82,7 +90,7 @@ private:
 #define IS_BIT_SET(num, idx) ((bool)((num >> idx) & 1ULL))
 #define IS_ODD(num) ((bool)(num % 2))
 #define IS_EVEN(num) ((bool)(!IS_ODD(num)))
-
+#define FAST_CEIL_DIV(x, y) (1 + ((x - 1) / y)) // (std::ceil( x / (double)y )
 #include <limits.h>     /* CHAR_BIT */
 
 #define BIT_MASK(__TYPE__, __ONE_COUNT__) \

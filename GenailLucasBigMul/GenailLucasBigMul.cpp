@@ -31,7 +31,7 @@
 //
 
 TEST_CASE("Multiply two digit small numbers", "MultiDigit multiply") {
-	for (uint64_t i = 10; i < 100; i++)
+	for (uint64_t i = 10; i < 1000LL; i++)
 	{
 		BigNum first(std::to_string(i));
 		for (uint64_t j = 10; j < 1000LL; j++)
