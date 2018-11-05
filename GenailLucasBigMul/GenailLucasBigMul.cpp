@@ -40,7 +40,6 @@ TEST_CASE("Multiply two digit small numbers", "MultiDigit multiply") {
 			INFO("i=" + std::to_string(i) + ", j=" + std::to_string(j));
 
 			BigNum result = GeLu::multiply(first, second);
-
 			CHECK(result.str() == std::to_string(i * j));
 		}
 	}
@@ -55,11 +54,11 @@ TEST_CASE("Multiply two digit small numbers", "MultiDigit multiply") {
 //}
 //
 //TEST_CASE("Factorial large", "Large factorial") {
-//	std::string product = "1";
+//	BigNum product = BigNum("1");
 //	for (int i = 1; i <= 120; i++)
-//		product = GeLu::multiply(product, std::to_string(i));
-//	std::cout << product << std::endl;
-//	REQUIRE(product == "6689502913449127057588118054090372586752746333138029810295671352301"
+//		product = GeLu::multiply(std::move(product), std::to_string(i));
+//
+//	REQUIRE(product.str() == "6689502913449127057588118054090372586752746333138029810295671352301"
 //		"6335572449629893668741652719849813081576378932140905525344085894081218598984811143"
 //		"89650005964960521256960000000000000000000000000000");
 //}
@@ -265,6 +264,21 @@ TEST_CASE("Multiply two small numbers", "Small multiply") {
 			INFO("i=" + num1.str() + ", j=" + std::to_string(j));
 			
 			BigNum result = GeLu::multiply_impl(j, num1);
+			std::string str = result.str();
+
+			CHECK(str == std::to_string(i * j));
+		}
+	}
+
+	for (int i = 0; i < 100; i++)
+	{
+		for (int j = 0; j < 10; j++)
+		{
+			BigNum num1(std::to_string(i));
+			BigNum num2(std::to_string(j));
+			INFO("i=" + num1.str() + ", j=" + std::to_string(j));
+
+			BigNum result = GeLu::multiply(num1, num2);
 			std::string str = result.str();
 
 			CHECK(str == std::to_string(i * j));
