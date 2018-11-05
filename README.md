@@ -7,7 +7,7 @@ back together.
 Here's a great VSauce video about them: https://www.youtube.com/watch?v=OxRMyPsLtTk
 
 # The library
-Only basic operators are implemented (add, sub, and multiply). This library exposes a multiply() and sum() function that takes an arbitrary length string and does the operation. This could be extended to division with another lut. Numbers are encoded in what is basically Binary Coded Decimal (BCD) plus a small control structure for sign and encoding unpacking. We acheive 2 chars per byte, and can do all math operations without copies by directly operating on the digits in their BCD form (1 nibble = 1 char). 
+Only basic operators are implemented (add, sub, and multiply). This library exposes the sum and add operations as static member functions of BigNum, and multiply is in GeLu namespace. This could be extended to division with another lut. Numbers are encoded in what is basically Binary Coded Decimal (BCD) plus a small control structure for sign and encoding unpacking. We acheive 2 chars per byte, and can do all math operations without copies by directly operating on the digits in their BCD form (1 nibble = 1 char). 
 
 # Why
 The rulers are interesting, and if you don't care about speed the code size is quite good. That said this isn't THAT slow, it
