@@ -72,27 +72,27 @@ TEST_CASE("BigNum encoding", "BigNum Encode") {
 	}
 	
 	BigNum num("1234");
-	REQUIRE(num.bitStr() == "00010010 00110100 00000000");
+	REQUIRE(num.bitStr() == "00010010 00110100");
 	REQUIRE(num.length() == 4);
 	REQUIRE(!num.isNegative());
 
 	BigNum neg_num("1234", true);
-	REQUIRE(neg_num.bitStr() == "00010010 00110100 00000010");
+	REQUIRE(neg_num.bitStr() == "00010010 00110100");
 	REQUIRE(neg_num.length() == 4);
 	REQUIRE(neg_num.isNegative());
 
 	BigNum odd_size("12345");
-	REQUIRE(odd_size.bitStr() == "00010010 00110100 01010001");
+	REQUIRE(odd_size.bitStr() == "00010010 00110100 01010000");
 	REQUIRE(odd_size.length() == 5);
 	REQUIRE(!odd_size.isNegative());
 
 	BigNum odd_size_neg("12345", true);
-	REQUIRE(odd_size_neg.bitStr() == "00010010 00110100 01010011");
+	REQUIRE(odd_size_neg.bitStr() == "00010010 00110100 01010000");
 	REQUIRE(odd_size_neg.length() == 5);
 	REQUIRE(odd_size_neg.isNegative());
 
 	BigNum upperDigits("0123456789");
-	REQUIRE(upperDigits.bitStr() == "00000001 00100011 01000101 01100111 10001001 00000000");
+	REQUIRE(upperDigits.bitStr() == "00000001 00100011 01000101 01100111 10001001");
 	REQUIRE(upperDigits.length() == 10);
 
 	SECTION("Extraction") {
@@ -114,22 +114,22 @@ TEST_CASE("BigNum encoding", "BigNum Encode") {
 	SECTION("Negative numbers") {
 		BigNum negNum(std::to_string(-100));
 		REQUIRE(negNum.isNegative());
-		REQUIRE(negNum.bitStr() == "00010000 00000011");
+		REQUIRE(negNum.bitStr() == "00010000 00000000");
 		REQUIRE(negNum.str() == "-100");
 
 		BigNum negNum2(std::to_string(100), true);
 		REQUIRE(negNum2.isNegative());
-		REQUIRE(negNum2.bitStr() == "00010000 00000011");
+		REQUIRE(negNum2.bitStr() == "00010000 00000000");
 		REQUIRE(negNum2.str() == "-100");
 
 		BigNum negNum3(std::to_string(-10));
 		REQUIRE(negNum3.isNegative());
-		REQUIRE(negNum3.bitStr() == "00010000 00000010");
+		REQUIRE(negNum3.bitStr() == "00010000");
 		REQUIRE(negNum3.str() == "-10");
 
 		BigNum negNum4(std::to_string(-1));
 		REQUIRE(negNum4.isNegative());
-		REQUIRE(negNum4.bitStr() == "00010011");
+		REQUIRE(negNum4.bitStr() == "00010000");
 		REQUIRE(negNum4.str() == "-1");
 
 		for (int i = -9; i < 0; i++) {
@@ -266,7 +266,6 @@ TEST_CASE("Multiply two small numbers", "Small multiply") {
 			
 			BigNum result = GeLu::multiply_impl(j, num1);
 			std::string str = result.str();
-			str.erase(0, std::min(str.find_first_not_of('0'), str.size() - 1));
 
 			CHECK(str == std::to_string(i * j));
 		}

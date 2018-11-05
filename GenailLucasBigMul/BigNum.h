@@ -7,6 +7,7 @@
 #include <iostream>
 #include <algorithm>
 #include <cassert>
+#include <cmath>
 
 /**Represents a variable length integer as a continguous array of 4 bit binary integers per each digit. 
 
@@ -30,47 +31,50 @@ form efficiently by walking every 4 bits: bit_idx = string_idx*4. Get number of 
 **/
 class BigNum {
 public:
+	struct ControlFields {
+		bool isNegative;
+		bool isOdd;
+	};
+
 	BigNum() = default;
 	BigNum(std::string str, bool isNeg = false);
 	
-	// zero indexed get char at idx. DOESN'T bounds check
-	uint8_t at(const uint32_t idx) const;
-
 	// get stringized number
 	std::string str(bool prependSign = true) const;
 
 	// get bit string including control nibble
 	std::string bitStr() const;
-
+	
 	bool isNegative() const;
 
-	// how many chars are held (ignores control nibble)
-	uint16_t length() const;
-	
 	// operations
 	static BigNum sum(const BigNum& addend, const BigNum& addend2);
 	static BigNum sub(const BigNum& minuend, const BigNum& subtrahend);
 
+	// zero indexed get char at idx. DOESN'T bounds check
+	uint8_t at(const uint32_t idx) const;
+
+	// how many chars are held
+	uint16_t length() const;
+
 	// manual insertion
 	void set(const uint32_t idx, const uint8_t val);
-	void insertCtrlNibble(bool isOdd, bool isNeg);
 
 	// alloc 'charCount' number of chars and fill with '0' 
 	void resize(const uint32_t charCount);
 
-	uint8_t controlByte() const;
+	// get/set control
+	ControlFields& getControl();
 
-	enum flags : uint8_t {
-		IS_ODD = 1 << 0,
-		IS_NEG = 1 << 1,
-	};
-
-	enum flagsIdx : uint8_t {
-		IS_ODD_IDX = 0,
-		IS_NEG_IDX = 1
-	};
+	// get control
+	ControlFields getControl() const;
 private:
+	// internal overload to avoid copies when spoofing sign
+	static inline BigNum sum(const BigNum& addend, const ControlFields& cf1, const BigNum& addend2, const ControlFields& cf2);
+
+	// keep control fields at end for safe future proof extension
 	std::vector<uint8_t> m_bits;
+	ControlFields m_control;
 };
 
 #define CEIL_DIV(dividend,  divisor) (dividend / divisor + (dividend % divisor != 0))
@@ -79,3 +83,8 @@ private:
 #define IS_ODD(num) ((bool)(num % 2))
 #define IS_EVEN(num) ((bool)(!IS_ODD(num)))
 
+#include <limits.h>     /* CHAR_BIT */
+
+#define BIT_MASK(__TYPE__, __ONE_COUNT__) \
+    ((__TYPE__) (-((__ONE_COUNT__) != 0))) \
+    & (((__TYPE__) -1) >> ((sizeof(__TYPE__) * CHAR_BIT) - (__ONE_COUNT__)))

@@ -77,11 +77,12 @@ namespace GeLu {
 		result.resize(multiplicand.length() + 1);
 
 		/*Our result will always use the odd digit cell. This cell exists for all encoding
-		with more than one char. A multiple is a minimum 1 digit by 1 digit. The max value
+		with more than one char. A multiply is a minimum 1 digit by 1 digit. The max value
 		for the min length is 9*9 = 81 which means we always need at min two chars to handle 
 		the carry. Meaning we always need two chars min and thus always have the odd byte cell
 		and so must fill it first since this goes right to left.*/
-		result.insertCtrlNibble(true, multiplicand.isNegative());
+		result.getControl().isNegative = multiplicand.isNegative();
+		result.getControl().isOdd = false;
 
 		uint8_t regionIdx = Ruler::getRegionStart(multiplier);
 		
@@ -98,7 +99,7 @@ namespace GeLu {
 			const Ruler& ruler = Lut::rulers.at(rulerIdx);
 
 			// insert digits right to left
-			result.set(result.length() - offset - 1, ruler.rhs.at(regionIdx));
+			result.set(maxLen - offset, ruler.rhs.at(regionIdx));
 
 			Dbg(std::cout << (int)multiplier << " push " << (int)ruler.rhs.at(regionIdx) << " = " << result.str() << std::endl);
 
@@ -107,8 +108,10 @@ namespace GeLu {
 		}
 
 		uint8_t carry = Lut::rulers.at(0).rhs.at(regionIdx);
-		result.set(result.length() - offset - 1, carry);
+		result.getControl().isOdd = (maxLen + 1) % 2;
 
+		result.set(0, carry);
+		
 		Dbg(std::cout << "push carry " << (int)carry << std::endl);
 		return result;
 	}
