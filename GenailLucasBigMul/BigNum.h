@@ -53,8 +53,17 @@ public:
 	bool isNegative() const;
 
 	// operations
-	static BigNum sum(const BigNum& addend, const BigNum& addend2);
-	static BigNum sub(const BigNum& minuend, const BigNum& subtrahend);
+	static inline BigNum sum(const BigNum& addend, const BigNum& addend2) {
+			// pass unaltered control fields through
+			return sum(addend, addend.getControl(), addend2, addend2.getControl());
+	}
+
+	static inline BigNum sub(const BigNum& minuend, const BigNum& subtrahend) {
+		ControlFields spoofed;
+		spoofed.isOdd = subtrahend.m_control.isOdd;
+		spoofed.isNegative = !subtrahend.m_control.isNegative;
+		return sum(minuend, minuend.getControl(), subtrahend, spoofed);
+	}
 
 	// zero indexed get char at idx. DOESN'T bounds check
 	uint8_t at(const uint32_t idx) const;
@@ -96,3 +105,73 @@ private:
 #define BIT_MASK(__TYPE__, __ONE_COUNT__) \
     ((__TYPE__) (-((__ONE_COUNT__) != 0))) \
     & (((__TYPE__) -1) >> ((sizeof(__TYPE__) * CHAR_BIT) - (__ONE_COUNT__)))
+
+void divmod10(uint32_t in, uint32_t &div, uint32_t &mod);
+
+inline BigNum BigNum::sum(const BigNum& addend, const ControlFields& cf1, const BigNum& addend2, const ControlFields& cf2) {
+	/* Be sure to operate on control fields and not control signals of BigNums here. This overload exists so cf's can be spoofed w/o copies*/
+
+	bool bothNegative = cf1.isNegative && cf2.isNegative;
+	bool bothPositive = !cf1.isNegative && !cf2.isNegative;
+	bool dontComplement = bothPositive | bothNegative;
+
+	// plus one for the carry which is (possibly) generated if magnitude increases (both pos or neg)
+	int addendLen = addend.length();
+	int addend2Len = addend2.length();
+	int maxLen = std::max<uint32_t>(addendLen, addend2Len) + dontComplement;
+
+	BigNum result;
+	result.resize(maxLen);
+
+	// start at right side and walk left with an offset, filling with zeros if needed, add digits. 
+	uint8_t carry = 0;
+	for (int offset = 0; offset < (maxLen - dontComplement); offset++)
+	{
+		uint8_t tmpAddend2 = offset >= addend2Len ? 0 : addend2.at(addend2Len - offset - 1);
+		uint8_t tmpAddend = offset >= addendLen ? 0 : addend.at(addendLen - offset - 1);
+
+		// 9's complement if negative
+		if (cf1.isNegative && !dontComplement)
+			tmpAddend = 9 - tmpAddend;
+
+		// 9's complement if negative
+		if (cf2.isNegative && !dontComplement)
+			tmpAddend2 = 9 - tmpAddend2;
+
+		// if positive do the operation x+y+c=result
+		uint16_t tmpResult = carry + tmpAddend + tmpAddend2;
+
+		// profiled as hot spot, do some bit magic
+		uint32_t div, mod;
+		divmod10(tmpResult, div, mod);
+
+		carry = (uint8_t)div;
+		uint8_t val = (uint8_t)mod;
+
+		result.set(maxLen - offset - 1, val);
+	}
+
+	// our encoding requires this, we just inserted manually so now we must insert this
+	result.m_control.isOdd = maxLen % 2;
+	result.m_control.isNegative = (!bothPositive && carry == 0) || bothNegative;
+
+	// add carry digit when summing positives.
+	if (dontComplement) {
+		result.set(0, carry);
+	}
+	else if (carry != 0) {
+		// Otherwise add carry if exists for 9's complement
+		result = sum(result, BigNum("1"));
+	}
+	else {
+		// Otherwise if no carry then take complement and make negative
+		for (int i = 0; i < result.length(); i++) {
+			result.set(i, 9 - result.at(i));
+		}
+
+		result.m_control.isOdd = result.m_control.isOdd;
+		result.m_control.isNegative = true;
+	}
+	return std::move(result);
+}
+
