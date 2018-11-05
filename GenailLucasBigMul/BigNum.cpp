@@ -64,7 +64,7 @@ void BigNum::set(const uint32_t idx, const uint8_t val) {
 	}
 }
 
-uint16_t BigNum::length() const {
+uint32_t BigNum::length() const {
 	// 1 byte is 2 chars
 	/*Odd: [ value '1' | empty ] len = 2 - 1 = 1
 	  Even: [ value '1' | value '0' ] len = 2 - 0 = 2

@@ -123,8 +123,7 @@ namespace GeLu {
 																||		||
 		Ex: 45 * 23 = (4*23)*10^1 + (5*23)*10^0 = 92'0' + 115 = 920 + 115 = 1035
 		*/
-		std::vector<BigNum> addends;		
-		addends.reserve(multiplier.length());
+		BigNum sum("0");
 
 		// each digit of multiplier times entire multicand (1 by N), then sum those results
 		const uint32_t multiplierLength = multiplier.length();
@@ -134,9 +133,9 @@ namespace GeLu {
 			Dbg(std::cout << gelu.str() << std::endl);
 	
 			gelu.append(multiplierLength - (place + 1), 0);
-			addends.push_back(std::move(gelu));
+			sum = BigNum::sum(sum, gelu);
 		}
-		return summation(addends);
+		return sum;
 	}
 	 
 	Ruler::Ruler(const GeLuLut& rhs, const GeLuLut& triangles)

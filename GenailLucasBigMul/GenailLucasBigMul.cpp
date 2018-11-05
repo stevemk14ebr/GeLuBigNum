@@ -53,15 +53,17 @@ TEST_CASE("Multiply two digit small numbers", "MultiDigit multiply") {
 //	REQUIRE(product == "30414093201713378043612608166064768844377641568960512000000000000");	
 //}
 //
-//TEST_CASE("Factorial large", "Large factorial") {
-//	BigNum product = BigNum("1");
-//	for (int i = 1; i <= 120; i++)
-//		product = GeLu::multiply(std::move(product), std::to_string(i));
-//
-//	REQUIRE(product.str() == "6689502913449127057588118054090372586752746333138029810295671352301"
-//		"6335572449629893668741652719849813081576378932140905525344085894081218598984811143"
-//		"89650005964960521256960000000000000000000000000000");
-//}
+TEST_CASE("Factorial large", "Large factorial") {
+	BigNum product = BigNum("1");
+	for (int i = 1; i <= 120; i++) {
+		std::cout << product.str() << std::endl;
+		product = GeLu::multiply(std::move(product), std::to_string(i));
+	}
+
+	REQUIRE(product.str() == "6689502913449127057588118054090372586752746333138029810295671352301"
+		"6335572449629893668741652719849813081576378932140905525344085894081218598984811143"
+		"89650005964960521256960000000000000000000000000000");
+}
 
 TEST_CASE("BigNum encoding", "BigNum Encode") {
 	for (int i = 0; i < 10; i++) {

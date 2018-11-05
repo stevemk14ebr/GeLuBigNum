@@ -60,7 +60,7 @@ public:
 	uint8_t at(const uint32_t idx) const;
 
 	// how many chars are held
-	uint16_t length() const;
+	uint32_t length() const;
 
 	// manual insertion
 	void set(const uint32_t idx, const uint8_t val);
