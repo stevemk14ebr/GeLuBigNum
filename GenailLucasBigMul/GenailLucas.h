@@ -8,6 +8,7 @@
 
 #include "BigNum.h"
 
+//http://web.math.unifi.it/users/giusti/traduzioni/regoliENG.pdf
 namespace GeLu {
 	typedef std::array<int8_t, 45> GeLuLut;
 
@@ -90,6 +91,8 @@ namespace GeLu {
 		if (multiplier == 0) {
 			Dbg(std::cout << (int)multiplier << " * " << multiplicand.str() << " = 0" << std::endl);
 			return BigNum("0");
+		} else if (multiplier == 1) {
+			return multiplicand;
 		}
 
 		uint32_t maxLen = multiplicand.length();
@@ -110,7 +113,17 @@ namespace GeLu {
 		uint8_t carry = Lut::rulers.at(0).rhs.at(regionIdx);
 		result.getControl().isOdd = (maxLen + 1) % 2;
 
-		result.set(0, carry);
+		// use carry slot or left shift all numbers into it
+		if (carry == 0) {
+			const uint32_t oldLen = result.length();
+			for (int i = 0; i < (oldLen - 1); i++) {
+				result.set(i, result.at(i + 1));
+			}
+			result.resize(oldLen - 1);
+			result.getControl().isOdd = maxLen % 2;
+		} else {
+			result.set(0, carry);
+		}
 		
 		Dbg(std::cout << "push carry " << (int)carry << std::endl);
 		return result;
