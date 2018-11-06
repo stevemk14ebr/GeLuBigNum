@@ -48,10 +48,7 @@
 //
 
 TEST_CASE("Factorial small", "Small factorial") {
-	BigNum product = BigNum("1");
-	for (int i = 1; i <= 99; i++) {
-		product = GeLu::multiply(std::move(product), std::to_string(i));
-	}
+	BigNum product = GeLu::factorial(99);
 
 	REQUIRE(product.str() == "93326215443944152681699238856266700490715968264381621468592963895217"
 		"5999932299156089414639761565182862536979208272237582511852109168640000000"
@@ -59,10 +56,7 @@ TEST_CASE("Factorial small", "Small factorial") {
 }
 
 TEST_CASE("Factorial large", "Large factorial") {
-	BigNum product = BigNum("1");
-	for (int i = 1; i <= 999; i++) {
-		product = GeLu::multiply(std::move(product), std::to_string(i));
-	}
+	BigNum product = GeLu::factorial(999);
 
 	std::cout << product.str() << std::endl;
 

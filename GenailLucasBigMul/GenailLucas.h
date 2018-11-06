@@ -61,11 +61,14 @@ namespace GeLu {
 	BigNum summation(const std::vector<BigNum>& terms)
 	{
 		assert(terms.size() > 0);
-		return std::accumulate(std::next(terms.begin()), terms.end(),
-			terms[0], // start with first element
-			[](const BigNum& lhs, const BigNum& rhs) {
-				return BigNum::sum(lhs, rhs);
-		});
+		if (terms.size() <= 0)
+			return BigNum("0");
+
+		BigNum sum = terms[0];
+		for (int i = 1; i < terms.size(); i++) {
+			sum = BigNum::sum(std::move(sum), terms[i]);
+		}
+		return sum;
 	}
 
 	// N digit by 1 digit (0-9)
@@ -146,11 +149,19 @@ namespace GeLu {
 			Dbg(std::cout << gelu.str() << std::endl);
 	
 			gelu.append(multiplierLength - (place + 1), 0);
-			sum = BigNum::sum(sum, gelu);
+			sum = BigNum::sum(std::move(sum), gelu);
 		}
 		return sum;
 	}
 	 
+	BigNum factorial(const uint32_t factor) {
+		BigNum product = BigNum("1");
+		for (int i = 1; i <= factor; i++) {
+			product = GeLu::multiply(std::move(product), std::to_string(i));
+		}
+		return std::move(product);
+	}
+
 	Ruler::Ruler(const GeLuLut& rhs, const GeLuLut& triangles)
 	{
 		this->rhs = rhs;
