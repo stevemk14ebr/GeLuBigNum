@@ -11,6 +11,6 @@ Only basic operators are implemented (add, sub, and multiply). This library expo
 
 # Why
 The rulers are interesting, and if you don't care about speed the code size is quite good. That said this isn't THAT slow, it
-can handle a 30 char number * 30 char number in around a millisecond or two, I did do a little profiler guided optimization. And memory usage is < 2 MB most of the time (could be significantly improved here).
+can handle a 30 char number * 30 char number in around a millisecond or two, I did do a little profiler guided optimization. Factorial of 999 takes about 20 seconods including other tests. And memory usage is ~ 1 MB most of the time.
 
 I also recommend taking a look at the rulers themselves. There's quite a few hidden paterrns and they're quite beautiful. You can actually generate all the numbers of the rulers with 3 or 4 nested for loops, they do indeed have an underlying structure.
