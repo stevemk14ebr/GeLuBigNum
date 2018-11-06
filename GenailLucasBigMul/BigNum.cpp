@@ -83,7 +83,7 @@ std::string BigNum::str(bool prependSign /*= true*/) const {
 	}
 
 	str.back() |= (((m_bits.back() >> 4) & 0xF) + '0') * m_control.isOdd;
- 	str.erase(0, std::min(str.find_first_not_of('0'), str.size() - 1));
+ 	//str.erase(0, std::min(str.find_first_not_of('0'), str.size() - 1));
 
 	if (prependSign && m_control.isNegative)
 		return "-" + str;
@@ -121,6 +121,27 @@ void BigNum::append(const uint32_t count, const uint8_t val) {
 
 bool BigNum::isNegative() const {
 	return m_control.isNegative;
+}
+
+void BigNum::erase(const uint32_t first, const uint32_t last) {
+	const uint32_t rmCount = last - first;
+	const uint32_t len = length();
+
+	// overwrite hole with stuff past last
+	int i = 0;
+	for (; i < rmCount && (last + i) < len; i++) {
+		set(first + i, at(last + i));
+	}
+	
+	// pull tail down to after last
+	int dest_of = 0;
+	for (int j = last + i; j < len; j++) {
+		set(last + dest_of, at(j));
+		dest_of++;
+	}
+
+	resize(len - rmCount);
+	m_control.isOdd = (len - rmCount) % 2;
 }
 
 void divmod10(uint32_t in, uint32_t &div, uint32_t &mod)

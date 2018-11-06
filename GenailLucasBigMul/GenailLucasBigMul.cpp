@@ -30,20 +30,20 @@
 //
 //
 
-TEST_CASE("Multiply two digit small numbers", "MultiDigit multiply") {
-	for (uint64_t i = 10; i < 1000LL; i++)
-	{
-		BigNum first(std::to_string(i));
-		for (uint64_t j = 10; j < 1000LL; j++)
-		{
-			BigNum second(std::to_string(j));
-			INFO("i=" + std::to_string(i) + ", j=" + std::to_string(j));
-
-			BigNum result = GeLu::multiply(first, second);
-			CHECK(result.str() == std::to_string(i * j));
-		}
-	}
-}
+//TEST_CASE("Multiply two digit small numbers", "MultiDigit multiply") {
+//	for (uint64_t i = 10; i < 1000LL; i++)
+//	{
+//		BigNum first(std::to_string(i));
+//		for (uint64_t j = 10; j < 1000LL; j++)
+//		{
+//			BigNum second(std::to_string(j));
+//			INFO("i=" + std::to_string(i) + ", j=" + std::to_string(j));
+//
+//			BigNum result = GeLu::multiply(first, second);
+//			CHECK(result.str() == std::to_string(i * j));
+//		}
+//	}
+//}
 //
 //
 //TEST_CASE("Factorial small", "Small factorial") {
@@ -53,12 +53,14 @@ TEST_CASE("Multiply two digit small numbers", "MultiDigit multiply") {
 //	REQUIRE(product == "30414093201713378043612608166064768844377641568960512000000000000");	
 //}
 //
+
 TEST_CASE("Factorial large", "Large factorial") {
 	BigNum product = BigNum("1");
 	for (int i = 1; i <= 120; i++) {
-		std::cout << product.str() << std::endl;
 		product = GeLu::multiply(std::move(product), std::to_string(i));
 	}
+
+	std::cout << product.str() << std::endl;
 
 	REQUIRE(product.str() == "6689502913449127057588118054090372586752746333138029810295671352301"
 		"6335572449629893668741652719849813081576378932140905525344085894081218598984811143"
@@ -285,5 +287,32 @@ TEST_CASE("Multiply two small numbers", "Small multiply") {
 
 			CHECK(str == std::to_string(i * j));
 		}
+	}
+}
+
+TEST_CASE("Bignum erase", "BigNum operation") {
+	BigNum num("0123456789");
+	SECTION("middle") {
+		REQUIRE(num.str() == "0123456789");
+		num.erase(2, 5);
+		REQUIRE(num.str() == "0156789");
+	}
+
+	SECTION("begginning") {
+		REQUIRE(num.str() == "0123456789");
+		num.erase(0, 2);
+		REQUIRE(num.str() == "23456789");
+	}
+
+	SECTION("end") {
+		REQUIRE(num.str() == "0123456789");
+		num.erase(8, 10);
+		REQUIRE(num.str() == "01234567");
+	}
+
+	SECTION("more") {
+		REQUIRE(num.str() == "0123456789");
+		num.erase(6, 9);
+		REQUIRE(num.str() == "0123459");
 	}
 }

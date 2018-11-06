@@ -54,8 +54,8 @@ public:
 
 	// operations
 	static inline BigNum sum(const BigNum& addend, const BigNum& addend2) {
-			// pass unaltered control fields through
-			return sum(addend, addend.getControl(), addend2, addend2.getControl());
+		// pass unaltered control fields through
+		return sum(addend, addend.getControl(), addend2, addend2.getControl());
 	}
 
 	static inline BigNum sub(const BigNum& minuend, const BigNum& subtrahend) {
@@ -70,6 +70,9 @@ public:
 
 	// how many chars are held
 	uint32_t length() const;
+
+	// erase chars in given range
+	void erase(const uint32_t first_incl, const uint32_t last_excl);
 
 	// manual insertion
 	void set(const uint32_t idx, const uint8_t val);
@@ -158,20 +161,27 @@ inline BigNum BigNum::sum(const BigNum& addend, const ControlFields& cf1, const 
 	// add carry digit when summing positives.
 	if (dontComplement) {
 		result.set(0, carry);
-	}
-	else if (carry != 0) {
+	}else if (carry != 0) {
 		// Otherwise add carry if exists for 9's complement
 		result = sum(result, BigNum("1"));
-	}
-	else {
+	}else {
 		// Otherwise if no carry then take complement and make negative
-		for (int i = 0; i < result.length(); i++) {
+		for (int i = 0; i < maxLen; i++) {
 			result.set(i, 9 - result.at(i));
 		}
 
-		result.m_control.isOdd = result.m_control.isOdd;
 		result.m_control.isNegative = true;
 	}
+
+	//Normalize Leading Zeros: equivalent to this operation on .str()
+	// str.erase(0, std::min(str.find_first_not_of('0'), str.size() - 1));
+	int firstNotOf = 0;
+	for (; firstNotOf < (result.length() - 1); firstNotOf++) {
+		if (result.at(firstNotOf) != 0)
+			break;
+	}
+
+	result.erase(0, firstNotOf);
 	return std::move(result);
 }
 
